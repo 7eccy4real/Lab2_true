@@ -12,17 +12,16 @@ public:
     ~Matrix() {}
     //Функиция случайного заполнения от 0 до 9
     void fillRandom() {
-        srand(time(0));
         for (unsigned int i = 0; i < m; ++i) {
             for (unsigned int j = 0; j < n; ++j) {
                 data[i][j] = rand() % 10;
             }
         }
     }
+
     //Перегрузка оператора [] доступа к индексу
     std::vector<int>& operator[](unsigned int index) {
         return data[index];
-
     }
     //Перегрузка оператора вывода в поток<<
     friend std::ostream& operator<<(std::ostream& os, const Matrix& matrix) {
@@ -48,20 +47,11 @@ public:
         return *this;
     }
     //Перегрузка оператора +
-    Matrix operator+(const Matrix& other) const {
-        Matrix result(m, n);
-        if (m != other.m || n != other.n) {
-            std::cerr << "Размеры матрицы не совпадают";
-            return result;
-        }
-        for (unsigned int i = 0; i < m; ++i) {
-            for (unsigned int j = 0; j < n; ++j) {
-                result.data[i][j] = data[i][j] + other.data[i][j];
-            }
-        }
-        return result;
-    }
+    Matrix operator+(const Matrix& other) {
+        Matrix result(*this);
 
+        return (result +=other);
+    }
     // Перегрузка оператора -=
     Matrix& operator-=(const Matrix& other) {
         if (m != other.m || n != other.n) {
@@ -75,22 +65,11 @@ public:
         }
         return *this;
     }
-
     // Перегрузка оператора -
-    Matrix operator-(const Matrix& other) const {
-        Matrix result(m, n);
-        if (m != other.m || n != other.n) {
-            std::cerr << "Размеры матрицы не совпадают";
-            return result;
-        }
-        for (unsigned int i = 0; i < m; ++i) {
-            for (unsigned int j = 0; j < n; ++j) {
-                result.data[i][j] = data[i][j] - other.data[i][j];
-            }
-        }
-        return result;
+    Matrix operator-( const Matrix& other)  {
+        Matrix result(*this);
+        return (result -=other);
     }
-
     // Перегрузка оператора *
     Matrix operator*(const Matrix& other) const {
         Matrix result(m, other.n);
@@ -130,9 +109,10 @@ public:
 };
 
 int main() {
+    srand(time(0));
     setlocale(LC_ALL, "Russian"); 
-    Matrix mat1(2, 3);
-    Matrix mat2(2, 3);
+    Matrix mat1(3, 3);
+    Matrix mat2(3, 3);
 
     mat1.fillRandom();
     mat2.fillRandom();
@@ -147,12 +127,13 @@ int main() {
     std::cout << "Матрица 1 + Матрица 2:" << std::endl;
     std::cout << mat3 << std::endl;
 
-    if (mat1 != mat2) {
-        std::cout << "Матрицы разных размеров" << std::endl;
-    }
-    else {
-        std::cout << "Матрицы одного размера" << std::endl;
-    }
+    Matrix mat4 = mat1 - mat2;
+    std::cout << "Матрица 1 - Матрица 2:" << std::endl;
+    std::cout << mat4 << std::endl;
+
+    Matrix mat5 = mat1 * mat2;
+    std::cout << "Матрица 1 * Матрица 2:" << std::endl;
+    std::cout << mat5 << std::endl;
 
     return 0;
 }
